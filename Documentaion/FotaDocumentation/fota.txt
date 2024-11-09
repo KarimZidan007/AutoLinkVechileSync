@@ -1,0 +1,67 @@
+Firmware Over-The-Air (FOTA) System Description
+
+
+PHOTO 1
+STATEMACHINE
+
+1. Purpose:
+The FOTA system within the "Infotainment DynaSync System" is designed to facilitate secure and efficient firmware updates for the connected Electronic Control Units (ECUs) within a vehicle. The primary objectives of the FOTA system are:
+
+Seamless Updates: Enable the installation of firmware updates without requiring physical access to the ECUs, enhancing convenience for users.
+
+Enhanced Security: Implement robust encryption and secure communication protocols to safeguard the integrity and confidentiality of firmware during transmission and installation.
+
+User Interaction: Provide a user-friendly interface through GUIs to prompt users for update choices and keep them informed about the update progress.
+
+2. System Modules:
+The FOTA system comprises several interconnected modules that work collaboratively to ensure successful and secure firmware updates:
+1. Desktop Application GUI:
+
+
+PHOTO 2
+
+
+Purpose: Initiates the firmware update process and serves as the user interface for interaction.
+Functionality:
+Encrypts firmware updates in .bin format.
+Publishes encrypted updates through MQTT to designated topics.
+Prompts users for installation choices through a user-friendly interface.
+2. MQTT Service on Raspberry Pi:
+
+
+DIAGRAM 1
+
+
+
+Purpose: Manages the communication between the Desktop Application GUI and the Main ECU.
+Functionality:
+Subscribes to MQTT topics to receive published firmware update messages.
+Facilitates the transmission of update information to the Main ECU.
+3. GUI Service on Raspberry Pi (Flashing GUI):
+
+
+PHOTO 3
+
+Purpose: Engages users in the firmware update process and relays user choices to the Firmware Update Service.
+Functionality:
+Presents installation choices for specific ECUs to users.
+Communicates user selections to the Firmware Update Service for further processing.
+4. Firmware Flashing Service:
+
+
+
+DIAGRAM 2
+
+Purpose: Handles the firmware flashing process and communicates with bootloaders on ECUs through I2C.
+Functionality:
+Establishes communication with ECUs via I2C.
+Initiates the flashing process based on user choices received from the GUI Service.
+Sends D-Bus signals to the GUI Service to update the progress bar.
+5. Interactions Between Modules:
+
+The Desktop Application GUI triggers the firmware update process by publishing encrypted updates via MQTT.
+The MQTT Service on the Raspberry Pi receives update messages and forwards them to the Main ECU.
+The GUI Service on the Raspberry Pi interacts with users, collecting their installation choices.
+The Firmware Flashing Service processes user choices and communicates with ECUs via I2C to initiate the flashing process.
+D-Bus signals are used for inter-process communication, updating the GUI Service on the progress of the firmware update.
+This modular architecture ensures a clear division of responsibilities and efficient communication between components, leading to a streamlined and effective Firmware Over-The-Air (FOTA) system
